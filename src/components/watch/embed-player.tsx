@@ -51,7 +51,7 @@ function EmbedPlayer(props: EmbedPlayerProps) {
         inset: 0,
         backgroundColor: '#000',
       }}>
-      <div className="absolute left-4 top-4 z-20">
+      <div className="absolute right-4 top-4 z-20">
         <Button
           type="button"
           variant="secondary"

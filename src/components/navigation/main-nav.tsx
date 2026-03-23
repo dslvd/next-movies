@@ -34,9 +34,21 @@ interface SearchResult {
   results: Show[];
 }
 
+const welcomeNavItems: Array<{ title: string; href: string }> = [
+  { title: 'Welcome', href: '#hero' },
+  { title: 'Features', href: '#features' },
+  { title: 'Browse', href: '/home' },
+];
+
 export function MainNav({ items }: MainNavProps) {
   const path = usePathname();
   const router = useRouter();
+  const isWelcomePage = path === '/';
+  const resolvedNavItems = (isWelcomePage
+    ? welcomeNavItems
+    : (items ?? []).filter((item): item is NavItem & { href: string } =>
+        Boolean(item.href),
+      )) as Array<{ title: string; href: string }>;
   // search store
   const searchStore = useSearchStore();
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -134,24 +146,22 @@ export function MainNav({ items }: MainNavProps) {
             <span className="sr-only">Home</span>
           </div>
         </Link>
-        {items?.length ? (
+        {resolvedNavItems.length ? (
           <nav className="hidden gap-6 md:flex">
-            {items?.map(
-              (item, index) =>
-                item.href && (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className={cn(
-                      'flex items-center text-sm font-medium text-foreground/60 transition hover:text-foreground/80',
-                      path === item.href && 'font-bold text-foreground',
-                      item.disabled && 'cursor-not-allowed opacity-80',
-                    )}
-                    onClick={() => handleChangeStatusOpen(false)}>
-                    {item.title}
-                  </Link>
-                ),
-            )}
+            {resolvedNavItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                className={cn(
+                  'flex items-center text-sm font-medium text-foreground/60 transition hover:text-foreground/80',
+                  !item.href.startsWith('#') &&
+                    path === item.href &&
+                    'font-bold text-foreground',
+                )}
+                onClick={() => handleChangeStatusOpen(false)}>
+                {item.title}
+              </Link>
+            ))}
           </nav>
         ) : null}
         <div className="block md:hidden">
@@ -184,27 +194,24 @@ export function MainNav({ items }: MainNavProps) {
                 </Link>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {items?.map((item, index) => (
+              {resolvedNavItems.map((item, index) => (
                 <DropdownMenuItem
                   key={index}
                   asChild
                   className="items-center justify-center">
-                  {item.href && (
-                    <Link
-                      href={item.href}
-                      onClick={() => handleChangeStatusOpen(false)}>
-                      {/* {item.icon &&  */}
-                      {/*   <item.icon className="mr-2 h-4 w-4" aria-hidden="true" /> */}
-                      {/* } */}
-                      <span
-                        className={cn(
-                          'line-clamp-1 text-foreground/60 hover:text-foreground/80',
-                          path === item.href && 'font-bold text-foreground',
-                        )}>
-                        {item.title}
-                      </span>
-                    </Link>
-                  )}
+                  <Link
+                    href={item.href}
+                    onClick={() => handleChangeStatusOpen(false)}>
+                    <span
+                      className={cn(
+                        'line-clamp-1 text-foreground/60 hover:text-foreground/80',
+                        !item.href.startsWith('#') &&
+                          path === item.href &&
+                          'font-bold text-foreground',
+                      )}>
+                      {item.title}
+                    </span>
+                  </Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
