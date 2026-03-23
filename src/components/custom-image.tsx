@@ -41,7 +41,7 @@ const customLoader = ({ src, width, quality }: ImageLoaderProps) => {
 //   if (urlEndpoint.endsWith('/'))
 //     urlEndpoint = urlEndpoint.substring(0, urlEndpoint.length - 1);
 //   return `${urlEndpoint}?url=${src}&${paramsString}`;
-// };
+// }
 //
 
 const CustomImage = forwardRef(function CustomImage(
